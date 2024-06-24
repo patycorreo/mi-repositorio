@@ -1,0 +1,77 @@
+tls:
+  #Dev keystore is used
+  keyPassword: "![JAPyQn0pO8kGN60qg2oGBA==]"
+  password: "![JAPyQn0pO8kGN60qg2oGBA==]"
+  alias: gglobalselfsigned
+  path: gglobalkeystore.jks
+  type: JKS
+
+reconnect:
+  frequency : "10000"
+  attempts : "3" 
+  
+#ObjectStore Properties
+os:
+  omsInventories:
+    entryTtl: "0"
+    expirationInterval: "0"
+
+https:
+  host: '0.0.0.0'
+  port: '8092'
+  readTimeout: '300000'
+  basePath: ''
+  connectionIdleTimeout: '300000'    
+  wmsRequest:
+      basePath: /wms/v2
+      frequency: '2000'
+      host: api.g-global.com
+      inMemorySize: '1024'
+      port: ''
+      reconnectionAttempts: '2'
+      responseTimeout: '300000'
+      getOauthToken:
+          path: /oauth/token
+          client_id : "![3g4FDjhgRsvI3lM1qo236Aaru2Dw/+z+ZsQjeZdIHHw=]"
+          client_secret : "![TNzwWmQ3U3O8VPfym/Yu7EGqH/1eNzA9+AsKAvXUPA8/5yxGQtqmcAy2J1e0/BDtXaerXP1nSx9J6LzYP3B2NA9sYzMZkLaT]"
+          grant_type : "client_credentials"
+      postOrderDetails:
+          path: /client/order
+            
+            
+email: #Dev Values
+  gglobal:
+      fromAddress: "reports@g-global.com"
+      host: smtp.gmail.com
+      port: '587'
+      user: reports@g-global.com
+      password: Globalin2021
+      toAddress: "patricia.cervantes@g-global.com"
+      toAddress2: "patricia.cervantes@g-global.com"
+      toAddress3: "patricia.cervantes@g-global.com"
+      bcc: "perla.cuevas@g-global.com"
+      
+email2:    #Dev Values
+  fromAddress: "patricia.cervantes@g-global.com"
+  host: smtp.gmail.com
+  password: Escorpion717
+  port: '587'
+  toAddress: "patricia.cervantes@g-global.com"
+  toAddress2: "patricia.cervantes@g-global.com"
+  toAddress3: "patricia.cervantes@g-global.com"
+  user: "patricia.cervantes@g-global.com"
+  bcc: "patricia.cervantes@g-global.com"
+
+GG:
+  host:  "gnex-globalization.crztpf1c2nue.us-east-1.rds.amazonaws.com"
+  port: "14339"
+  user: "dev"
+  db: "DesglobalizationConfig"
+  password: "D3v@1673"
+    
+darwin:
+  host: "rsdsqldarwindev.crztpf1c2nue.us-east-1.rds.amazonaws.com"
+  port: "6699"
+  user: "DevGG"
+  db: "darwin"
+  password: "dev@1673"

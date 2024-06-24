@@ -1,0 +1,76 @@
+tls:
+  keyPassword: "![JAPyQn0pO8kGN60qg2oGBA==]"
+  password: "![JAPyQn0pO8kGN60qg2oGBA==]"
+  alias: gglobalselfsigned
+  path: gglobalkeystore.jks
+  type: JKS
+  
+  
+reconnect:
+  frequency : "10000"
+  attempts : "3"  
+  
+#ObjectStore Properties
+os:
+  omsInventories:
+    entryTtl: "0"
+    expirationInterval: "0"   
+
+https:
+  host: '0.0.0.0'
+  port: '8091'
+  readTimeout: '300000'
+  basePath: ''
+  connectionIdleTimeout: '300000'    
+  wmsRequest:
+      basePath: /wms/v2
+      frequency: '2000'
+      host: api.global1.io
+      inMemorySize: '1024'
+      port: ''
+      reconnectionAttempts: '2'
+      responseTimeout: '300000'
+      getOauthToken:
+          path: /oauth/token
+          client_id : "![jmXaSDyB+d8wA5VxJkCh7NOYXYyP4VIyrInUaWua/Vg=]"
+          client_secret : "![TLWrO8y+C1lZxXjuKtDCleb+pibhae0EAYPE2nbqmtR/CQGe4bxB2wjtMu85xZdGFvHSUDf9PoxcqUTh7AKJTc73ToUuXkuK]"
+          grant_type : "client_credentials"
+      postOrderDetails:
+          path: /client/order
+          
+email:
+  global:
+      fromAddress: "patycorreo@hotmail.com"
+      host: smtp.live.com
+      port: '465'
+      user: patycorreo
+      password: Afrodita2019
+      toAddress: "reports@hotmail.com"
+      toAddress2: "reports@hotmail.com"
+      toAddress3: "reports@hotmail.com"
+      bcc: "patricia.cervantes.medina@gmail.com"
+      
+email2:   
+  fromAddress: "patycorreo@hotmail.com"
+  host: smtp.gmail.com
+  password: Escorpion717
+  port: '587'
+  toAddress: "patycorreo@hotmail.com"
+  toAddress2: "patycorreo@hotmail.com"
+  toAddress3: "patycorreo@hotmail.com"
+  user: "patycorreo@hotmail.com"
+  bcc: "patycorreo@hotmail.com"
+
+GG:
+  host:  "test.crztpf1c2nue.us-east-1.rds.amazonaws.com"
+  port: "14339"
+  user: "dev"
+  db: "Config"
+  password: "D3v@1233"
+    
+BD:
+  host: "sql5.freemysqlhosting.net"
+  port: "3306"
+  user: "sql5698137"
+  db: "sql5698137"
+  password: "RP8XS9xXkA"

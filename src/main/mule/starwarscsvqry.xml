@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <http:listener-config name="starwarscsvqry-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="starwarscsvqry-config" api="starwarscsvqry.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="df244a34-4b1c-4d33-976c-b6f81b756563" basePath="/api">
+        <http:request-connection protocol="HTTPS" host="swapi.dev" />
+    </http:request-config>
+    <flow name="starwarscsvqry-main">
+        <http:listener config-ref="starwarscsvqry-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="starwarscsvqry-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="starwarscsvqry-console">
+        <http:listener config-ref="starwarscsvqry-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="starwarscsvqry-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{'success': false,
+ 'data': {},
+ 'message': error.description}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\all:starwarscsvqry-config">
+        <http:request method="GET" doc:name="Request to swapi.dev" doc:id="cceb115e-6825-4278-8356-d9024d5477cd" config-ref="HTTP_Request_configuration" path="/people" target="People" />
+        <ee:transform doc:name="PAYLOAD to CSV" doc:id="fd968090-06e1-4b24-8f4b-ec1f44cf416c">
+            <ee:message>
+                <ee:set-payload><![CDATA[output application/csv quoteValues=true
+---
+vars.People.results map {"name":$.name, "height": $.height, "mass": $.mass, "hair_color": $.hair_color, "skin_color":$.skin_color, "eye_color": $.eye_color, "birth_year": $.birth_year, "gender": $.gender, "homeworld": $.homeworld, "films": $.films joinBy " ", "species": $.species joinBy " ", "vehicles": $.vehicles joinBy " ", "starships": $.starships joinBy " ", "created": $.created, "edited": $.edited, "url": $.url}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message="get:\all:starwarscsvqry-config" />
+    </flow>
+    <flow name="get:\gender:starwarscsvqry-config">
+        <set-payload value="#[attributes.queryParams.gender]" doc:name="gender" doc:id="f7a53cb3-9be3-46ca-97fb-4781243ed8cb" />
+        <set-payload value="#[payload]" doc:name="People" doc:id="7c082374-ff0a-4bb7-89e4-7085a18ba563" />
+        <choice doc:name="Only gender valid" doc:id="2debc293-57d5-4d94-829a-b83648803071">
+            <when expression="payload == &quot;male&quot; or payload ==&quot;female&quot; or payload == &quot;n/a&quot;">
+                <http:request method="GET" doc:name="Request to swapi.dev" doc:id="d1610524-b0fd-43c2-893c-7a4c1e9c7605" config-ref="HTTP_Request_configuration" path="/people" target="People" />
+                <ee:transform doc:name="PAYLOAD  Filter" doc:id="fd522e1c-2db5-4dcd-9b52-1adf5781e2c8">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues=true
+---
+vars.People.results filter ($.gender==payload) map {"name":$.name, "height": $.height, "mass": $.mass, "hair_color": $.hair_color, "skin_color":$.skin_color, "eye_color": $.eye_color, "birth_year": $.birth_year, "gender": $.gender, "homeworld": $.homeworld, "films": $.films joinBy " ", "species": $.species joinBy " ", "vehicles": $.vehicles joinBy " ", "starships": $.starships joinBy " ", "created": $.created, "edited": $.edited, "url": $.url}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            <otherwise>
+                <raise-error doc:name="Raise error" doc:id="32b1de0e-572f-43d7-997d-75c425f6a989" type="GENDER:INVALID_RECORD" description="&quot;Invalid gender&quot;" />
+            </otherwise>
+        </choice>
+        <logger level="INFO" message="get:\gender:starwarscsvqry-config" />
+    </flow>
+</mule>

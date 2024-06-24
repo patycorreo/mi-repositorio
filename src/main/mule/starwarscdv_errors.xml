@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<error-handler name="Error_Handler" doc:id="0ec8ec1b-c595-4027-bccd-f453edb387c9" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7429c30e-704c-4449-89c4-66d54af2c0df" type="ANY">
+			<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	'App name': error.failingComponent,&#10;	'Event Type': error.errorType.namespace,&#10;	'Event Type identifier': error.errorType.identifier,&#10;	'Error Detail': error.detailedDescription&#10;}]" doc:name="Set Payload" doc:id="6fdef324-5955-404f-bbcc-5d15fca925ad" />
+			<parse-template doc:name="Parse Template" doc:id="91a03602-2248-4f23-816b-36b0024b3d0d" target="correo_error" targetValue="#[payload]" location="correo_error.html">
+			</parse-template>
+			<email:send doc:name="Send" doc:id="c44cf2b4-0ac7-4c7a-b265-bf56f96b9f36" config-ref="Email_SMTP" fromAddress="${email.global.fromAddress}" subject="[Error]">
+				<email:to-addresses >
+					<email:to-address value="patycorreo@hotmail.com" />
+				</email:to-addresses>
+				<email:body contentType="text/html">
+					<email:content ><![CDATA[#[vars.correo_error]]]></email:content>
+				</email:body>
+			</email:send>
+		</on-error-continue>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8eedc2ad-36e2-406f-9ce2-9bafa4cb7b10" type="DB:CONNECTIVITY">
+			<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10; 'success': false,&#10; 'data': {},&#10; 'message': &quot;Cannot get connection for URL jdbc:mysql. Access denied&quot;&#10;}]" doc:name="Set Payload" doc:id="8a1b8343-84d6-41ec-9df8-59ece2a0ccdc" />
+			<parse-template doc:name="Parse Template" doc:id="379f75af-c467-4c68-8d30-dc68a5598324" target="correo_error" targetValue="#[payload]" location="correo_error.html">
+			</parse-template>
+			<email:send doc:name="Send" doc:id="e559804c-e16b-4bb7-9601-f2f75c9d32eb" config-ref="Email_SMTP" fromAddress="${email.global.fromAddress}" subject="[Error]" >
+				<email:to-addresses >
+					<email:to-address value="patycorreo@hotmail.com" />
+				</email:to-addresses>
+				<email:body contentType="text/html" >
+					<email:content ><![CDATA[#[vars.correo_error]]]></email:content>
+				</email:body>
+			</email:send>
+		</on-error-continue>
+	</error-handler>
+	
+	</mule>

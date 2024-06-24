@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="d5a4a1db-86a9-40b3-bfdc-7db1433ac148">
+        <email:smtp-connection host="${email.global.host}" port="${email.global.port}" user="${email.global.user}" password="${email.global.password}">
+            <email:properties>
+                <email:property key="mail.smtp.starttls.enable" value="true" />
+            </email:properties>
+        </email:smtp-connection>
+    </email:smtp-config>
+    <configuration-properties doc:name="Configuration properties" doc:id="40249d2c-873c-415a-923d-d90524a4aaf3" file="properties/${mule.env}.yaml" />
+    <tls:context name="TLS_Context" doc:name="TLS Context" doc:id="29ebfea9-207d-4434-9767-0f09d5195202">
+        <tls:key-store type="${tls.type}" path="${tls.path}" alias="${tls.alias}" keyPassword="${secure::tls.keyPassword}" password="${secure::tls.password}" />
+    </tls:context>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="4f88e71d-899f-44a0-8f4d-85d86b0d162a" file="properties/${mule.env}.yaml" key="${key}">
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	
+	<configuration doc:name="Configuration" doc:id="9dc54f52-3bf6-4ef8-ab10-0f24b9147121" defaultErrorHandler-ref="Error_Handler" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0bd4af1d-5766-4021-8cd6-1fd7f209820e">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS" readTimeout="${https.readTimeout}" tlsContext="TLS_Context" connectionIdleTimeout="${https.connectionIdleTimeout}" />
+    </http:listener-config>
+       <db:config name="Database_Config" doc:name="Database Config" doc:id="64697a13-6a28-46eb-853e-1ce9e0ef8bb5" >
+		<db:my-sql-connection host="${BD.host}" port="${BD.port}" user="${BD.user}" password="${BD.password}" database="${BD.db}" />
+	</db:config>
+</mule>
+
+	
